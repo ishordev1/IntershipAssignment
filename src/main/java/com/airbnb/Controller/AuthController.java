@@ -21,8 +21,11 @@ import com.airbnb.Security.JwtRequest;
 import com.airbnb.Security.JwtResponse;
 import com.airbnb.Service.UserService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name="public Api")
 public class AuthController {
 	@Autowired
 	private UserService userService;
@@ -31,12 +34,9 @@ public class AuthController {
 @Autowired
 private CustomUserServiceImp customUserService;
 	@PostMapping("/signup")
-	ResponseEntity<JwtResponse> register(@Validated @RequestBody UserDto userDto) {
+	ResponseEntity<UserDto> register(@Validated @RequestBody UserDto userDto) {
 		UserDto ud = this.userService.createUser(userDto);
-		Authentication authentication = new UsernamePasswordAuthenticationToken(ud.getUsername(), ud.getPassword());
-		String token = JwtProvider.generateToken(authentication);
-		JwtResponse jwtResponse = new JwtResponse(token, "successfully register");
-		return new ResponseEntity<>(jwtResponse, HttpStatus.CREATED);
+		return new ResponseEntity<>(ud, HttpStatus.CREATED);
 	}
 	@PostMapping("/login")
 	public ResponseEntity<JwtResponse> signIn(@RequestBody JwtRequest request){
